@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .cell {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-right: 1px solid #fff;
+      border-bottom: 1px solid #fff;
+      background-color: #eee;
+    }
+
+    .red {
+      background-color: red;
+    }
+
+    #board {
+      width: 701px;
+      height: 701px;
+      line-height: 7px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="board"></div>
+  <button onclick="save()">save</button>
+
+</body>
+<script>
+  const mapArr = localStorage.mapArr ? JSON.parse(localStorage.mapArr) : Array(10000).fill(0)
+  const board = document.getElementById('board')
+  for (let y = 0; y < 100; y++) {
+    for (let x = 0; x < 100; x++) {
+      const cell = document.createElement('div')
+      cell.classList.add('cell')
+      if (mapArr[100 * y + x] === 1) {
+        cell.style.backgroundColor = 'black'
+      }
+      cell.addEventListener('mousemove', () => {
+        if (mousedown) {
+          if (clear) {
+            cell.style.backgroundColor = ''
+            mapArr[100 * y + x] = 0
+          } else {
+            cell.style.backgroundColor = 'black'
+            mapArr[100 * y + x] = 1
+          }
+        }
+      })
+      board.appendChild(cell)
+    }
+  }
+  let mousedown = false
+  let clear = false
+  document.addEventListener('mousedown', (e) => {
+    mousedown = true
+    clear = (e.whice === 3)
+  })
+  document.addEventListener('mouseup', (e) => {
+    mousedown = false
+  })
+  function save() {
+    console.log(mapArr)
+    localStorage.mapArr = JSON.stringify(mapArr)
+  }
+  function sleep(duration) {
+    return new Promise(resolve => {
+      setTimeout(resolve, duration)
+    })
+  }
+  // 路径查找
+  async function findPath(map, start, end) {
+    board.children[end[1] * 100 + end[0]].style.borderRightColor = 'red'
+    const table = Object.create(map)
+    const queue = [start]
+    const path = []
+    async function inset(x, y, pre) {
+      if (x < 0 || x >= 100 || y < 0 || y >= 100) {
+        return
+      }
+      if (table[y * 100 + x]) {
+        return
+      }
+      table[y * 100 + x] = pre
+      // await sleep(1)
+      board.children[y * 100 + x].style.backgroundColor = 'lightgreen'
+      queue.push([x, y])
+    }
+
+    while (queue.length > 0) {
+      let [x, y] = queue.shift()
+      if (x === end[0] && y === end[1]) {
+        while (x != start[0] || y != start[1]) {
+          [x, y] = table[y * 100 + x]
+          await sleep(1)
+          board.children[y * 100 + x].style.backgroundColor = 'yellow'
+          path.push([x, y])
+        }
+        return path
+      }
+      await inset(x, y - 1, [x, y])
+      await inset(x, y + 1, [x, y])
+      await inset(x - 1, y, [x, y])
+      await inset(x + 1, y, [x, y])
+
+      await inset(x - 1, y - 1, [x, y])
+      await inset(x - 1, y + 1, [x, y])
+      await inset(x + 1, y - 1, [x, y])
+      await inset(x + 1, y + 1, [x, y])
+
+    }
+    return null
+  }
+</script>
+
+</html>
