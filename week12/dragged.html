@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+
+  <div id="dragable" style="width:100px;height:100px;background-color:pink;"></div>
+</body>
+<script>
+  const dragable = document.getElementById('dragable')
+  // 暂存拖拽后的数据
+  let baseX = 0;
+  let baseY = 0;
+  dragable.addEventListener('mousedown', e => {
+    // 获取下按时鼠标距xy轴的距离
+    let startX = e.clientX;
+    let startY = e.clientY;
+    let up = e => {
+      // 当松开鼠标时，计算偏移量
+      baseX = baseX + e.clientX - startX
+      baseY = baseY + e.clientY - startY
+      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseup', up)
+    };
+    let move = moveE => {
+      // 计算拖拽数据，移动后的数据-初始值-暂存的上一次拖拽后的数据
+      dragable.style.transform = `translate(${baseX + moveE.clientX - startX}px,${baseY + moveE.clientY - startY}px)`
+
+    };
+    document.addEventListener('mousemove', move)
+    document.addEventListener('mouseup', up)
+  })
+</script>
+
+</html>

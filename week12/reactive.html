@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+  <input type="range" id='r' min=0 max=255>
+  <input type="range" id='g' min=0 max=255>
+  <input type="range" id='b' min=0 max=255>
+  <input type="text" id='a' min=0 max=255>
+  <input type="text" id='d' min=0 max=255>
+  <div id='bg' style="width:100px;height:100px;border:1px solid blue;"></div>
+</body>
+<script src='reactive-6.js'></script>
+<script>
+  let object = {
+    r: 0,
+    g: 0,
+    b: 0,
+  }
+
+  let po = reactive(object)
+
+  effset(() => {
+    document.getElementById('r').value = po.r
+  })
+  effset(() => {
+    document.getElementById('g').value = po.g
+  })
+  effset(() => {
+    document.getElementById('b').value = po.b
+  })
+  effset(() => {
+    document.getElementById('bg').style.backgroundColor = `rgb(${po.r} ${po.g} ${po.b})`
+  })
+  document.getElementById('r').addEventListener('input', e => {
+    po.r = e.target.value
+  })
+  document.getElementById('g').addEventListener('input', e => {
+    po.g = e.target.value
+  })
+  document.getElementById('b').addEventListener('input', e => {
+    po.b = e.target.value
+  })
+  document.getElementById('a').addEventListener('input', e => {
+    console.log('a', e.target.value);
+  })
+  document.getElementById('d').addEventListener('change', e => {
+    console.log('d', e.target.value);
+  })
+</script>
+
+</html>

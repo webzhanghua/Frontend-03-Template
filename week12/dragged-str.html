@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+
+  <div id="container">文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字
+  </div>
+
+  <div id="dragable" style="display:inline-block;width:100px;height:100px;background-color:pink;"></div>
+</body>
+<script>
+  let dragable = document.getElementById('dragable')
+  dragable.addEventListener('mousedown', downE => {
+    let move = moveE => {
+      let dragableObj = getNearData(moveE.clientX, moveE.clientY)
+      dragableObj.insertNode(dragable)
+    }
+
+    let up = upE => {
+      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseup', up)
+    }
+
+    // 绑定移动和抬起的事件
+    document.addEventListener('mousemove', move)
+    document.addEventListener('mouseup', up)
+
+  })
+
+  let container = document.getElementById('container')
+  const ranges = []
+  for (let i = 0; i < container.childNodes[0].textContent.length; i++) {
+    let range = document.createRange()
+    range.setStart(container.childNodes[0], i)
+    range.setEnd(container.childNodes[0], i)
+    ranges.push(range)
+  }
+
+  // 获取拖拽模块最近的range
+  function getNearData(x, y) {
+    let min = Infinity
+    let minObj = null
+    for (let range of ranges) {
+      let rangeObj = range.getBoundingClientRect()
+      let clientX = rangeObj.x, clientY = rangeObj.y;
+      let result = (clientX - x) ** 2 + (clientY - y) ** 2
+      if (result < min) {
+        min = result
+        minObj = range
+      }
+    }
+    return minObj
+  }
+
+  document.addEventListener('selectstart', e => e.preventDefault())
+</script>
+
+</html>
